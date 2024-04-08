@@ -10,7 +10,7 @@ def get_connected_devices():
             devices.append(device_id)
     return devices
 
-def is_pixel_device(device_id):
+def get_device_model(device_id):
     command = ["shell", "getprop", "ro.product.model"]
     _, model, _ = execute_adb_command(["-s", device_id] + command)
-    return "Pixel" in model
+    return model.strip()
