@@ -1,0 +1,7 @@
+config/*
+adb/*
+*/*/__pycache__
+*/__pycache__
+venv
+dump*
+*.txt
