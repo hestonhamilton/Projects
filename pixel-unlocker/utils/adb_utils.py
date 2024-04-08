@@ -43,8 +43,25 @@ def execute_adb_command(command):
     adb_path = setup_adb()
     if not adb_path:
         raise RuntimeError("Failed to set up ADB")
-    
-    full_command = [adb_path] + command if adb_path != "adb" else command
+
+    full_command = [os.path.join(adb_path, 'adb.exe')] + command if adb_path != "adb" else ['adb'] + command
     process = subprocess.Popen(full_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
-    return process.returncode, stdout.decode(), stderr.decode()
+    if process.returncode != 0:
+        raise RuntimeError(f"ADB command {command} failed: {stderr}")
+    return stdout.decode().strip()
+
+def execute_fastboot_command(command):
+    fastboot_path = setup_adb()
+    if not fastboot_path:
+        raise RuntimeError("Failed to set up Fastboot")
+
+    full_command = [os.path.join(fastboot_path, 'fastboot.exe')] + command if fastboot_path != "adb" else ['fastboot'] + command
+    process = subprocess.Popen(full_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    if process.returncode != 0:
+        raise RuntimeError(f"Fastboot command {command} failed: {stderr}")
+    return stdout.decode().strip()
+
+def reboot_device(device_id):
+    execute_fastboot_command(["-s", device_id, "reboot"])

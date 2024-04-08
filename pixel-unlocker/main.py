@@ -1,6 +1,6 @@
 from utils.adb_utils import setup_adb
 from modules.device_checker import get_connected_devices, get_device_model
-from modules.bootloader import unlock_bootloader
+from modules.bootloader import unlock_bootloader, wait_for_device_bootloader
 
 def main():
     # Setup ADB; this will install it in the project directory if not present in the system
@@ -22,6 +22,8 @@ def main():
             user_response = input(f"Do you want to unlock the bootloader of {model}? (y/n): ").lower()
             if user_response == 'y':
                 unlock_bootloader(device_id, model)
+                if wait_for_device_bootloader(device_id):
+                    reboot_device(device_id)
             else:
                 print(f"Skipping bootloader unlock for {device_id}. ({model})")
         else:
