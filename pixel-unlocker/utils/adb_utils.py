@@ -63,5 +63,25 @@ def execute_fastboot_command(command):
         raise RuntimeError(f"Fastboot command {command} failed: {stderr}")
     return stdout.decode().strip()
 
+def get_connected_devices():
+    _, stdout, _ = execute_adb_command(["devices"])
+    devices = []
+    for line in stdout.splitlines():
+        if "\tdevice" in line:
+            device_id = line.split("\t")[0]
+            devices.append(device_id)
+    return devices
+    
+def get_firmware_details(device_id):
+    version_release = execute_adb_command(["-s", device_id, "shell", "getprop", "ro.build.version.release"]).strip()
+    build_id = execute_adb_command(["-s", device_id, "shell", "getprop", "ro.build.id"]).strip()
+    
+    return version_release, build_id
+
+def get_device_model(device_id):
+    command = ["shell", "getprop", "ro.product.model"]
+    _, model, _ = execute_adb_command(["-s", device_id] + command)
+    return model.strip()
+
 def reboot_device(device_id):
     execute_fastboot_command(["-s", device_id, "reboot"])
