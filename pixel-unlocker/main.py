@@ -1,5 +1,4 @@
-from utils.adb_utils import setup_adb
-from modules.device_checker import get_connected_devices, get_device_model
+from utils.adb_utils import setup_adb, get_connected_devices, get_device_model
 from modules.bootloader import unlock_bootloader, wait_for_device_bootloader
 
 def main():
